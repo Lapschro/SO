@@ -52,7 +52,7 @@ int main (int argc, char **argv){
 	}
 
 	AnswerMessage am;
-	am.type = RCV;
+	am.msgtype = RCV;
 	am.jobNumber = 1.;
 
 	msgsnd(msgID, &am, sizeof(am.jobNumber), 0);

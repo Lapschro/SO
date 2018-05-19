@@ -27,7 +27,7 @@ int main(int argc, char** argv){
 	msgID = msgget (KEY, 0660);
 
 	if(msgID < 0){
-		std::cout<<"Could not get message queue.\n"<<strerror(errno);
+		std::cout<<"Could not get message queue.\n"<<strerror(errno)<<std::endl;
 		exit(-1);
 	}
 
@@ -39,7 +39,7 @@ int main(int argc, char** argv){
 
 	MSGRCV(msgID, &am, sizeof(long), RCV, 0)
 	else
-	std::cout<<"Message received! Job Number: "<<am.jobNumber;
+	std::cout<<"Message received! Job Number: "<<am.jobNumber<<std::endl;
 
 	return 0;
 }
