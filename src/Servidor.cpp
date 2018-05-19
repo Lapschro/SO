@@ -11,8 +11,6 @@
 
 #define KEY 0xb00b
 
-
-
 int msgID;
 
 void Alarm(int a){
@@ -33,9 +31,9 @@ int main (int argc, char **argv){
 	signal (SIGINT, WrapUp);
 
 	Message msg;
-	
+
 	msgID = msgget(KEY, IPC_CREAT | 0660);
-	
+
 	if(msgID < 0){
 		std::cout<<"Could not get message queue.\n";
 		exit(-1);
@@ -61,3 +59,4 @@ int main (int argc, char **argv){
 
 	return 0;
 }
+

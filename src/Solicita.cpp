@@ -17,14 +17,31 @@ int main(int argc, char** argv){
 
 	msg.msgtype = SND;
 
-	msg.content.pid = getpid();
-	msg.content.hour = 0;
-	msg.content.minute = 0;
-	msg.content.copies = 0;
-	msg.content.priority = 0;
-	strcpy(msg.content.processName, "Hello World");
+	if(argc < 5){
+		std::cout<<"Erro na entrada: \nFormato de chamada:\nsolicita_execucao <hora:min> <copias> <prioridade> <nome do executavel>\n";
+		return 1;
+	}
 
-	msgID = msgget (KEY, 0660);
+	msg.content.pid = getpid();
+	char* hourminute = argv[1];
+	msg.content.hour = atoi(hourminute);
+
+	char c ;
+	do{
+		c = *(hourminute++);
+	}while(c != ':' && c!= '\0');
+
+	if(c == 0){
+		std::cout<<"Formato de hora errada\n";
+		return -1;
+	}
+
+	msg.content.minute = atoi(++hourminute);
+	msg.content.copies = atoi(argv[2]);
+	msg.content.priority = atoi(argv[3]);
+	strcpy(msg.content.processName, argv[4]);
+
+	msgID = msgget (KEY, IPC_CREAT|0660);
 
 	if(msgID < 0){
 		std::cout<<"Could not get message queue.\n"<<strerror(errno)<<std::endl;
