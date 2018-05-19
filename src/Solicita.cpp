@@ -8,7 +8,7 @@
 
 #include "Structures.h"
 
-#define KEY 0xb00b
+#define KEY 0x40304
 
 int msgID;
 
@@ -17,7 +17,7 @@ int main(int argc, char** argv){
 
 	msg.msgtype = SND;
 
-	if(argc < 5){
+	if(argc < 4){
 		std::cout<<"Erro na entrada: \nFormato de chamada:\nsolicita_execucao <hora:min> <copias> <prioridade> <nome do executavel>\n";
 		return 1;
 	}
@@ -38,10 +38,10 @@ int main(int argc, char** argv){
 
 	msg.content.minute = atoi(++hourminute);
 	msg.content.copies = atoi(argv[2]);
-	msg.content.priority = atoi(argv[3]);
-	strcpy(msg.content.processName, argv[4]);
+	msg.content.priority = (argc < 4) ? atoi(argv[3]) : 1;
+	strcpy(msg.content.processName, argv[(argc < 4 )?3:4]);
 
-	msgID = msgget (KEY, IPC_CREAT|0660);
+	msgID = msgget (KEY, 0660);
 
 	if(msgID < 0){
 		std::cout<<"Could not get message queue.\n"<<strerror(errno)<<std::endl;
@@ -49,14 +49,12 @@ int main(int argc, char** argv){
 	}
 
 	MSGSND(msgID, &msg, sizeof(Content), 0)
-	else
-	std::cout<<"Message sent!\n";
-	
+
 	AnswerMessage am;
 
 	MSGRCV(msgID, &am, sizeof(long), RCV, 0)
 	else
-	std::cout<<"Message received! Job Number: "<<am.jobNumber<<std::endl;
+	std::cout<<"Job Number: "<<am.jobNumber<<std::endl<<"Process name: "<<msg.content.processName<<;
 
 	return 0;
 }
