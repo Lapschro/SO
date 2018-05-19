@@ -54,7 +54,7 @@ int main(int argc, char** argv){
 
 	MSGRCV(msgID, &am, sizeof(long), RCV, 0)
 	else
-	std::cout<<"Job Number: "<<am.jobNumber<<std::endl<<"Process name: "<<msg.content.processName<<;
+	std::cout<<"Job Number: "<<am.jobNumber<<std::endl<<" Process name: "<<msg.content.processName<<" Time: "<<msg.content.hour<<":"<<msg.content.minute<<" Priority: "<<msg.content.priority<<std::endl;
 
 	return 0;
 }
