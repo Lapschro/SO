@@ -12,10 +12,10 @@
 
 int msgID;
 
-int main(){
+int main(int argc, char** argv){
 	Message msg;
 
-	msg.msgtype = 1;
+	msg.msgtype = SND;
 
 	msg.content.pid = getpid();
 	msg.content.hour = 0;
@@ -24,17 +24,22 @@ int main(){
 	msg.content.priority = 0;
 	strcpy(msg.content.processName, "Hello World");
 
-	msgID = msgget (KEY, IPC_CREAT | 0660);
+	msgID = msgget (KEY, 0660);
 
 	if(msgID < 0){
 		std::cout<<"Could not get message queue.\n"<<strerror(errno);
 		exit(-1);
 	}
 
-	if(msgsnd(msgID, &msg, sizeof(Content), 0) < 0){
-		std::cout<<strerror(errno)<<std::endl;
-	}else
+	MSGSND(msgID, &msg, sizeof(Content), 0)
+	else
 	std::cout<<"Message sent!\n";
+	
+	AnswerMessage am;
+
+	MSGRCV(msgID, &am, sizeof(long), RCV, 0)
+	else
+	std::cout<<"Message received! Job Number: "<<am.jobNumber;
 
 	return 0;
 }

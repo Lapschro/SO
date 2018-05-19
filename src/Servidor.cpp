@@ -11,16 +11,26 @@
 
 #define KEY 0xb00b
 
+
+
 int msgID;
 
 void Alarm(int a){
 	std::cout<<"Alarm.\n";
 }
 
+void WrapUp(int a){
+	if(msgID > 0){
+		if(msgctl(msgID, IPC_RMID, NULL) < 0){
+			std::cout<<"Error while deleting queue: "<<strerror(errno)<<std::endl;
+		}
+	}
+}
+
 int main (int argc, char **argv){
 	signal (SIGALRM, Alarm);
-	signal (SIGTERM, Alarm);
-	signal (SIGINT, Alarm);
+	signal (SIGTERM, WrapUp);
+	signal (SIGINT, WrapUp);
 
 	Message msg;
 	
@@ -32,15 +42,22 @@ int main (int argc, char **argv){
 	}
 	
 	alarm(5);
-	if(msgrcv(msgID, &msg, sizeof(Content), 0, 0) < 0){
+	if(msgrcv(msgID, &msg, sizeof(Content), SND, 0) < 0){
 		std::cout<<strerror(errno)<<std::endl;
 	}else{
 		std::cout<<"Message received!\n";
+		alarm(0);
 		std::cout<<"Contents: \n";
 		std::cout<<msg.content.pid<<" "<<msg.content.processName<<std::endl;
 	}
 
-	msgctl(msgID, IPC_RMID, NULL);
+	AnswerMessage am;
+	am.type = RCV;
+	am.jobNumber = 1.;
+
+	msgsnd(msgID, &am, sizeof(am.jobNumber), 0);
+
+	WrapUp(0);
 
 	return 0;
 }

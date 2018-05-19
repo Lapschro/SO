@@ -1,3 +1,7 @@
+#define MSGSND(msgID,ptr,size,flag) if(msgsnd(msgID,ptr,size,flag) < 0) std::cout<<"Error on send: "<<strerror(errno)<<std::endl;
+
+#define MSGRCV(msgID,ptr,size,type,flag) if(msgrcv(msgID,ptr,size,type,flag) < 0) std::cout<<"Error on receive: "<<strerror(errno)<<std::endl;
+
 enum MSGType{
 	SND = 1, RCV
 };
@@ -15,9 +19,9 @@ typedef struct Message{
 	Content content;
 } Message;
 
-typedef struct AnswerMessage{
+typedef struct answerMessage{
 	long msgtype;
 	long jobNumber;
-}
+} AnswerMessage;
 
 
