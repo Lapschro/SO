@@ -8,13 +8,13 @@ Vamos ter no mínimo dois processos: solicita execução e escalonador de proces
 
 **Sintaxe**: solicita_execucao(tempo, copias, prioridade, arquivo_exec)
     
-> __tempo__: Parâmetro a ser fornecido no formato hh:mm. Especifica o delay de execução em relação à hora corrente.
+* __tempo__: Parâmetro a ser fornecido no formato hh:mm. Especifica o delay de execução em relação à hora corrente.
 
->__copias__: Parâmetro a ser fornecido como um inteiro. Especifica o número de cópias que serão executadas.
+* __copias__: Parâmetro a ser fornecido como um inteiro. Especifica o número de cópias que serão executadas.
 
->__prioridade__: Prioridade inicial do Processo. (1, 2 ou 3).
+* __prioridade__: Prioridade inicial do Processo. (1, 2 ou 3).
 
->__arquivo_exec__: nome do arquivo executável a ser executado de maneira postergada.
+* __arquivo_exec__: nome do arquivo executável a ser executado de maneira postergada.
 
 **Comportamento:**
 >Se não houver parâmetro inválido, é atribuído um número do job único à tupla \<arquivo_exec>, 
