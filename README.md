@@ -48,4 +48,18 @@
               fila3(5s)
               fila2(5s)
               fila2(5s)
-              
+
+
+#### Atenção:
+    Os processos que estão prontos para execução em um dado momento são regidos pela política Round-Robin, 
+    com quantum de 5 segundos. Em um dado momento, somente um dos processos regidos pelo escalonador estará 
+    no estado RUNNING.
+
+#### Exemplo:
+Às 16:00 temos a seguinte configuração na estrutura de dados:
+
+| job| arquivo_exec        | hh:mm           | copias  | prioridade |
+| -- | ------------------- |:---------------:| -------:| ----------:|
+| 5  | hello_world         | 12:05           |  3      |    2       |
+| 7  | teste               | 12:30           |  1      |    1       |
+
