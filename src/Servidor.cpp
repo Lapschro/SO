@@ -248,7 +248,7 @@ int main (int argc, char **argv){
 	}
 	for(;;){
 		alarm(runningTime);
-		std::cout<<runningTime<<std::endl;
+		//std::cout<<runningTime<<std::endl;
 		if(msgrcv(msgID, &msg, sizeof(Content), SND, 0) >= 0){
 			runningTime = alarm(0);
 			//std::cout<<"Message received!\n";
