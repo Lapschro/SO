@@ -3,10 +3,13 @@
 
 #include <sys/ipc.h>
 #include <sys/msg.h>
+#include <sys/types.h>
+#include <wait.h>
 #include <errno.h>
 #include <unistd.h>
 #include <string.h>
 #include <signal.h>
+
 #include <ctime>
 
 #include "Structures.h"
@@ -17,6 +20,8 @@
 #define NJOBS 5
 
 long jobNumber = 1;
+
+long currentProcess = -1;
 
 typedef struct job {
 	long jobNumber;
@@ -32,6 +37,7 @@ Job jobs[NJOBS];
 typedef struct process{
 	long pid;
 	unsigned int priority;
+	int jobID;
 	bool priorityUp;
 	bool ran;
 } Process;
@@ -41,7 +47,7 @@ Process processes[NPROCESSES];
 int msgID;
 
 void Alarm(int a){
-	std::cout<<"Alarm.\n";
+	//std::cout<<"Alarm.\n";
 }
 
 void WrapUp(int a){
@@ -55,10 +61,83 @@ void WrapUp(int a){
 }
 
 void CreateProcess(int jobID){
-	std::cout<<"Process created\n";
+	int freeSpaces = 0;
+	for(int j = 0 ; j < NPROCESSES; j++){
+		if(processes[j].pid == 0)
+			freeSpaces++;
+	}
+
+	if(freeSpaces < jobs[jobID].copies){
+		std::cout<<"Processes table is full.\n";
+		return;
+	}
+
+	for(int i = 0; i < jobs[jobID].copies; i++){
+		int j;
+		for(j = 0; j < NPROCESSES; j++){
+			if(processes[j].pid == 0)
+				break;
+		}
+		
+		Process p;
+		p.priority = jobs[jobID].priority;
+		p.jobID = jobID;
+		p.priorityUp = false;
+		p.ran = false;
+		p.pid = fork();
+		
+		if(p.pid == 0){
+			execl(jobs[jobID].processName, jobs[jobID].processName, (char*)NULL);
+			std::cout<<strerror(errno)<<std::endl;
+		}
+		
+		std::cout<<"Stopping pid: "<<p.pid<<std::endl;
+		kill(p.pid, SIGSTOP);
+
+		processes[j] = p;
+	}
+	jobs[jobID].running = true;
 }
 
 void Update(){
+	if(currentProcess != -1){
+		kill(processes[currentProcess].pid, SIGSTOP);
+
+		int status;
+
+		if(/*WIFEXITED(status)*/waitpid(currentProcess, &status, WNOHANG)>0){
+			jobs[processes[currentProcess].jobID].copies--;
+
+			processes[currentProcess].pid = 0;
+
+			for(int i = 0;  i < NJOBS; i++){
+				if(jobs[i].copies == 0){
+					jobs[i].jobNumber = 0;
+					jobs[i].running = false;
+				}
+			}
+		}else{
+			if(processes[currentProcess].ran){
+				processes[currentProcess].ran = false;
+				if(processes[currentProcess].priority == 3){
+					processes[currentProcess].priorityUp = true;
+				}
+				if(processes[currentProcess].priority == 0){
+					processes[currentProcess].priorityUp = false;
+				}
+
+				processes[currentProcess].priority += processes[currentProcess].priorityUp?-1:1;
+			}else{
+				processes[currentProcess].ran = true;
+			}
+
+			Process p = processes[currentProcess];
+			memcpy(processes, &processes[1], (NPROCESSES-1)*sizeof(Process));
+			processes[NPROCESSES -1] = p;
+
+		}
+	}
+
 	for(int i = 0; i < NJOBS; i++){
 		if(jobs[i].jobNumber != 0 && !jobs[i].running ){
 			double diff = difftime(mktime(&jobs[i].startTime), time(NULL));
@@ -70,6 +149,35 @@ void Update(){
 	}
 }
 
+int ProcessCompare(const void* a, const void* b){
+	Process pa = *(Process*)a;
+	Process pb = *(Process*)b;
+
+	if(pa.pid == 0 && pb.pid == 0)
+		return 0;
+
+	if(pa.pid == 0)
+		return 1;
+	
+	if(pb.pid == 0)
+		return -1;
+
+	return pa.priority - pb.priority;
+}
+
+void Scheduler(){
+
+	qsort((void*)processes, NPROCESSES, sizeof(Process), ProcessCompare);
+
+
+	if(processes[0].pid == 0){
+		currentProcess = -1;
+		return;
+	}
+
+	currentProcess = 0;
+	kill(processes[0].pid, SIGCONT);
+}
 
 void MessageReceived(Message msg){
 	std::cout<<"Contents: \n";
@@ -134,14 +242,14 @@ int main (int argc, char **argv){
 	for(;;){
 		alarm(5);
 		if(msgrcv(msgID, &msg, sizeof(Content), SND, 0) < 0){
-			std::cout<<strerror(errno)<<std::endl;
+			
 		}else{
 			alarm(0);
 			std::cout<<"Message received!\n";
 			MessageReceived(msg);
 		}
 		Update();
-		//Scheduler();
+		Scheduler();
 	}	
 
 	WrapUp(0);

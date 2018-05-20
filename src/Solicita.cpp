@@ -18,7 +18,7 @@ int main(int argc, char** argv){
 	msg.msgtype = SND;
 
 	if(argc < 4){
-		std::cout<<"Erro na entrada: \nFormato de chamada:\nsolicita_execucao <hora:min> <copias> <prioridade> <nome do executavel>\n";
+		std::cout<<"Erro na entrada: \nFormato de chamada:\nsolicita_execucao <hora:min> <copias> [<prioridade>] <nome do executavel>\n";
 		return 1;
 	}
 
@@ -53,8 +53,11 @@ int main(int argc, char** argv){
 	AnswerMessage am;
 
 	MSGRCV(msgID, &am, sizeof(long), RCV, 0)
-	else
-	std::cout<<"Job Number: "<<am.jobNumber<<std::endl<<" Process name: "<<msg.content.processName<<" Time: "<<msg.content.hour<<":"<<msg.content.minute<<" Priority: "<<msg.content.priority<<std::endl;
+	else{
+		if(am.jobNumber == 0){
+			std::cout<<"Could not create job.\n";
+		}else
+		std::cout<<"Job Number: "<<am.jobNumber<<std::endl<<" Process name: "<<msg.content.processName<<" Time: "<<msg.content.hour<<":"<<msg.content.minute<<" Priority: "<<msg.content.priority<<std::endl;
 
 	return 0;
 }
