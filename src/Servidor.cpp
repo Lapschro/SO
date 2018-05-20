@@ -23,6 +23,8 @@ long jobNumber = 1;
 
 long currentProcess = -1;
 
+unsigned int runningTime = 5;
+
 typedef struct job {
 	long jobNumber;
 	char processName[80];
@@ -47,6 +49,7 @@ Process processes[NPROCESSES];
 int msgID;
 
 void Alarm(int a){
+	runningTime = 5;
 	//std::cout<<"Alarm.\n";
 }
 
@@ -132,11 +135,12 @@ void Update(){
 			}else{
 				processes[currentProcess].ran = true;
 			}
-
-			Process p = processes[currentProcess];
-			memcpy(processes, &processes[1], (NPROCESSES-1)*sizeof(Process));
-			processes[NPROCESSES -1] = p;
-
+			
+			if(runningTime == 5){
+				Process p = processes[currentProcess];
+				memcpy(processes, &processes[1], (NPROCESSES-1)*sizeof(Process));
+				processes[NPROCESSES -1] = p;
+			}
 		}
 	}
 
@@ -175,7 +179,8 @@ void Scheduler(){
 		currentProcess = -1;
 		return;
 	}
-
+	if(currentProcess == -1)
+		runningTime = 5;
 	currentProcess = 0;
 	kill(processes[0].pid, SIGCONT);
 }
@@ -230,6 +235,7 @@ int main (int argc, char **argv){
 	signal (SIGINT, WrapUp);
 
 	Message msg;
+	runningTime = 5;
 
 	memset(jobs, 0, NJOBS*sizeof(Job));
 	memset(processes, 0, NPROCESSES*sizeof(Process));
@@ -241,9 +247,10 @@ int main (int argc, char **argv){
 		exit(-1);
 	}
 	for(;;){
-		alarm(5);
+		alarm(runningTime);
+		std::cout<<runningTime<<std::endl;
 		if(msgrcv(msgID, &msg, sizeof(Content), SND, 0) >= 0){
-			alarm(0);
+			runningTime = alarm(0);
 			//std::cout<<"Message received!\n";
 			MessageReceived(msg);
 		}
