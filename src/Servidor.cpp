@@ -16,8 +16,8 @@
 
 #define KEY 0x40304
 
-#define NPROCESSES 5
-#define NJOBS 5
+#define NPROCESSES 20
+#define NJOBS 20
 
 long jobNumber = 1;
 
@@ -61,7 +61,7 @@ void WrapUp(int a){
 }
 
 void CreateProcess(int jobID){
-	int freeSpaces = 0;
+	unsigned int freeSpaces = 0;
 	for(int j = 0 ; j < NPROCESSES; j++){
 		if(processes[j].pid == 0)
 			freeSpaces++;
@@ -72,7 +72,7 @@ void CreateProcess(int jobID){
 		return;
 	}
 
-	for(int i = 0; i < jobs[jobID].copies; i++){
+	for(unsigned int i = 0; i < jobs[jobID].copies; i++){
 		int j;
 		for(j = 0; j < NPROCESSES; j++){
 			if(processes[j].pid == 0)
@@ -89,9 +89,11 @@ void CreateProcess(int jobID){
 		if(p.pid == 0){
 			execl(jobs[jobID].processName, jobs[jobID].processName, (char*)NULL);
 			std::cout<<strerror(errno)<<std::endl;
+			jobs[jobID].jobNumber = 0;
+			return;
 		}
 		
-		std::cout<<"Stopping pid: "<<p.pid<<std::endl;
+		//std::cout<<"Stopping pid: "<<p.pid<<std::endl;
 		kill(p.pid, SIGSTOP);
 
 		processes[j] = p;
@@ -141,7 +143,7 @@ void Update(){
 	for(int i = 0; i < NJOBS; i++){
 		if(jobs[i].jobNumber != 0 && !jobs[i].running ){
 			double diff = difftime(mktime(&jobs[i].startTime), time(NULL));
-			std::cout<<diff<<std::endl;
+			//std::cout<<diff<<std::endl;
 			if(diff <= 0){
 				CreateProcess(i);
 			}
@@ -162,13 +164,12 @@ int ProcessCompare(const void* a, const void* b){
 	if(pb.pid == 0)
 		return -1;
 
-	return pa.priority - pb.priority;
+	return (int)pa.priority - (int)pb.priority;
 }
 
 void Scheduler(){
 
 	qsort((void*)processes, NPROCESSES, sizeof(Process), ProcessCompare);
-
 
 	if(processes[0].pid == 0){
 		currentProcess = -1;
@@ -180,8 +181,8 @@ void Scheduler(){
 }
 
 void MessageReceived(Message msg){
-	std::cout<<"Contents: \n";
-	std::cout<<msg.content.pid<<" "<<msg.content.processName<<std::endl;
+	//std::cout<<"Contents: \n";
+	//std::cout<<msg.content.pid<<" "<<msg.content.processName<<std::endl;
 	
 	int i;	
 	for(i = 0; i < NJOBS; i++){
@@ -241,11 +242,9 @@ int main (int argc, char **argv){
 	}
 	for(;;){
 		alarm(5);
-		if(msgrcv(msgID, &msg, sizeof(Content), SND, 0) < 0){
-			
-		}else{
+		if(msgrcv(msgID, &msg, sizeof(Content), SND, 0) >= 0){
 			alarm(0);
-			std::cout<<"Message received!\n";
+			//std::cout<<"Message received!\n";
 			MessageReceived(msg);
 		}
 		Update();

@@ -4,8 +4,8 @@
 #include <ctime>
 
 int main (){
-	for(int i = 0; i < 10; i++){
-		printf("Slept %d\n", i);
+	for(int i = 0; i < 15; i++){
+		printf("2- Slept %d\n", i);
 		sleep(1);
 	}
 	printf("Acabou!\n");

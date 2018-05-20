@@ -38,7 +38,7 @@ int main(int argc, char** argv){
 
 	msg.content.minute = atoi(++hourminute);
 	msg.content.copies = atoi(argv[2]);
-	msg.content.priority = (argc < 4) ? atoi(argv[3]) : 1;
+	msg.content.priority = (argc < 4) ? 1 : atoi(argv[3]) ;
 	strcpy(msg.content.processName, argv[(argc < 4 )?3:4]);
 
 	msgID = msgget (KEY, 0660);
@@ -58,7 +58,7 @@ int main(int argc, char** argv){
 			std::cout<<"Could not create job.\n";
 		}else
 		std::cout<<"Job Number: "<<am.jobNumber<<std::endl<<" Process name: "<<msg.content.processName<<" Time: "<<msg.content.hour<<":"<<msg.content.minute<<" Priority: "<<msg.content.priority<<std::endl;
-
+	}
 	return 0;
 }
 
