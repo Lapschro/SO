@@ -18,9 +18,7 @@
 #define NJOBS 20
 
 long jobNumber = 1;
-
 long currentProcess = -1;
-
 unsigned int runningTime = 5;
 
 typedef struct job {
@@ -228,9 +226,9 @@ void MessageReceived(Message msg){
 
 
 int main (int argc, char **argv){
-	signal (SIGALRM, Alarm);
-	signal (SIGTERM, WrapUp);
-	signal (SIGINT, WrapUp);
+	signal (SIGALRM, Alarm); /*Assincrono, usado quando tem uma chamada a funcao alarm*/
+	signal (SIGTERM, WrapUp); /*TERMINATION*/
+	signal (SIGINT, WrapUp); /*INTERRUPCAO*/
 
 	Message msg;
 	runningTime = 5;

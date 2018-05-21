@@ -67,7 +67,10 @@ int main(int argc, char** argv){
 		if(am.jobNumber == 0){
 			std::cout<<"Could not create job.\n";
 		}else
-		std::cout<<"Job Number: "<<am.jobNumber<<std::endl<<" Process name: "<<msg.content.processName<<" Time: "<<msg.content.hour<<":"<<msg.content.minute<<" Priority: "<<msg.content.priority<<std::endl;
+			std::cout << "Job Number: " << am.jobNumber << std::endl
+					  << " Process name: " << msg.content.processName << std::endl
+					  << " Time: " << msg.content.hour << ":" << msg.content.minute << std::endl
+					  << " Priority: " << msg.content.priority << std::endl;
 	}
 	return 0;
 }
