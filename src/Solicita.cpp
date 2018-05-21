@@ -9,6 +9,8 @@
 #include "Structures.h"
 
 
+
+
 int msgID;
 
 int main(int argc, char** argv){
@@ -23,19 +25,21 @@ int main(int argc, char** argv){
 
 	msg.content.pid = getpid();
 	char* hourminute = argv[1];
-	msg.content.hour = atoi(hourminute);
 
-	char c ;
-	do{
-		c = *(hourminute++);
-	}while(c != ':' && c!= '\0');
-
-	if(c == 0){
-		std::cout<<"Formato de hora errada\n";
+	if(strlen(hourminute) != 5){
+		std::cout << "Formato de hora errada\n";
 		return -1;
+	}else{
+		/*cast hour and minute*/
+		const char delimiters[] = ":";
+		char *hours;
+		char *minutes;
+		minutes = strdupa(hourminute);
+		hours = strsep(&minutes, delimiters);
+		msg.content.hour = atoi(hours);
+		msg.content.minute = atoi(minutes);
 	}
-
-	msg.content.minute = atoi(++hourminute);
+	
 	msg.content.copies = atoi(argv[2]);
 	msg.content.priority = (argc < 4) ? 1 : atoi(argv[3]) ;
 	strcpy(msg.content.processName, argv[(argc < 4 )?3:4]);
