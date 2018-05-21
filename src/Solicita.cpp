@@ -35,22 +35,29 @@ int main(int argc, char** argv){
 		char *hours;
 		char *minutes;
 		minutes = strdupa(hourminute);
-		hours = strsep(&minutes, delimiters);
+		hours = strsep(&minutes, delimiters); /* token => "words" */
 		msg.content.hour = atoi(hours);
 		msg.content.minute = atoi(minutes);
 	}
+
 	
 	msg.content.copies = atoi(argv[2]);
 	msg.content.priority = (argc < 4) ? 1 : atoi(argv[3]) ;
+
+	if (msg.content.priority <1){
+		msg.content.priority = 1;
+	}else if(msg.content.priority > 3){
+		msg.content.priority = 3;
+	}
+	
 	strcpy(msg.content.processName, argv[(argc < 4 )?3:4]);
 
 	msgID = msgget(KEY, QUEUEPERMISSION);
 
 	if(msgID < 0){
-		std::cout<<"Could not get message queue.\n"<<strerror(errno)<<std::endl;
+		std::cout<<"Could not get message queue.\n"<<std::endl;
 		exit(-1);
 	}
-
 	MSGSND(msgID, &msg, sizeof(Content), 0)
 
 	AnswerMessage am;
