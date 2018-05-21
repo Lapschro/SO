@@ -8,7 +8,6 @@
 
 #include "Structures.h"
 
-#define KEY 0x40304
 
 int msgID;
 
@@ -41,7 +40,7 @@ int main(int argc, char** argv){
 	msg.content.priority = (argc < 4) ? 1 : atoi(argv[3]) ;
 	strcpy(msg.content.processName, argv[(argc < 4 )?3:4]);
 
-	msgID = msgget (KEY, 0660);
+	msgID = msgget(KEY, QUEUEPERMISSION);
 
 	if(msgID < 0){
 		std::cout<<"Could not get message queue.\n"<<strerror(errno)<<std::endl;

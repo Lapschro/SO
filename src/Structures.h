@@ -1,3 +1,5 @@
+#define KEY 0x40304
+#define QUEUEPERMISSION 0660
 #define MSGSND(msgID,ptr,size,flag) if(msgsnd(msgID,ptr,size,flag) < 0) std::cout<<"Error on send: "<<strerror(errno)<<std::endl;
 
 #define MSGRCV(msgID,ptr,size,type,flag) if(msgrcv(msgID,ptr,size,type,flag) < 0) std::cout<<"Error on receive: "<<strerror(errno)<<std::endl;
@@ -19,7 +21,7 @@ typedef struct Message{
 	Content content;
 } Message;
 
-typedef struct answerMessage{
+typedef struct AnswerMessage{
 	long msgtype;
 	long jobNumber;
 } AnswerMessage;

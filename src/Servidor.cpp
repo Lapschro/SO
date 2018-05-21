@@ -14,8 +14,6 @@
 
 #include "Structures.h"
 
-#define KEY 0x40304
-
 #define NPROCESSES 20
 #define NJOBS 20
 
@@ -240,7 +238,7 @@ int main (int argc, char **argv){
 	memset(jobs, 0, NJOBS*sizeof(Job));
 	memset(processes, 0, NPROCESSES*sizeof(Process));
 
-	msgID = msgget(KEY, IPC_CREAT | 0660);
+	msgID = msgget(KEY, IPC_CREAT | QUEUEPERMISSION);
 
 	if(msgID < 0){
 		std::cout<<"Could not get message queue.\n";
