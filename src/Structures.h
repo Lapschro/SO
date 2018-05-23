@@ -5,7 +5,7 @@
 #define MSGRCV(msgID,ptr,size,type,flag) if(msgrcv(msgID,ptr,size,type,flag) < 0) std::cout<<"Error on receive: "<<strerror(errno)<<std::endl;
 
 enum MSGType{
-	SND = 1, RCV
+	SND = 1, RCV, RMV, LIST, SHUTDOWN
 };
 
 typedef struct Content{
@@ -18,6 +18,7 @@ typedef struct Content{
 
 typedef struct Message{
 	long msgtype;
+	int msgAct;
 	Content content;
 } Message;
 

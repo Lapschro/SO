@@ -224,6 +224,17 @@ void MessageReceived(Message msg){
 	msgsnd(msgID, &am, sizeof(am.jobNumber), 0);
 }
 
+void removeJob(long jobID)
+{
+	jobs[jobID-1].jobNumber = 0;
+
+	AnswerMessage am;
+	am.msgtype = RMV;
+	am.jobNumber = jobID;
+
+	msgsnd(msgID, &am, sizeof(am.jobNumber), 0);
+
+}
 
 int main (int argc, char **argv){
 	signal (SIGALRM, Alarm); /*Assincrono, usado quando tem uma chamada a funcao alarm*/
@@ -245,10 +256,17 @@ int main (int argc, char **argv){
 	for(;;){
 		alarm(runningTime);
 		//std::cout<<runningTime<<std::endl;
-		if(msgrcv(msgID, &msg, sizeof(Content), SND, 0) >= 0){
-			runningTime = alarm(0);
-			//std::cout<<"Message received!\n";
-			MessageReceived(msg);
+		if(msgrcv(msgID, &msg, sizeof(Content), -1, 0) >= 0){
+			if(msg.msgAct == SND){
+				std::cout<<"certo";
+				runningTime = alarm(0);
+				//std::cout<<"Message received!\n";
+				MessageReceived(msg);
+			}
+			else if(msg.msgAct == RMV){
+				removeJob(msg.content.pid);
+
+			}
 		}
 		Update();
 		Scheduler();

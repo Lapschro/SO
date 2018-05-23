@@ -17,7 +17,7 @@ int main(int argc, char** argv){
 	Message msg;
 
 	msg.msgtype = SND;
-
+	msg.msgAct = SND;
 	if(argc < 4){
 		std::cout<<"Erro na entrada: \nFormato de chamada:\nsolicita_execucao <hora:min> <copias> [<prioridade>] <nome do executavel>\n";
 		return 1;
