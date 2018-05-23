@@ -226,12 +226,23 @@ void MessageReceived(Message msg){
 
 void removeJob(long jobID)
 {
-	jobs[jobID-1].jobNumber = 0;
+	if(jobID>0){
 
+		if(jobs[jobID-1].running == 0 ){
+
+			jobs[jobID - 1].jobNumber = 0;
+
+			AnswerMessage am;
+			am.msgtype = RMV;
+			am.jobNumber = jobID;
+
+			msgsnd(msgID, &am, sizeof(am.jobNumber), 0);
+			return;
+		}
+	}
 	AnswerMessage am;
 	am.msgtype = RMV;
-	am.jobNumber = jobID;
-
+	am.jobNumber = -1;
 	msgsnd(msgID, &am, sizeof(am.jobNumber), 0);
 
 }
