@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <sys/types.h>
@@ -9,11 +8,9 @@
 #include <unistd.h>
 #include <string.h>
 #include <signal.h>
-
 #include <ctime>
-
 #include "Structures.h"
-
+#include <stdlib.h>
 #define NPROCESSES 20
 #define NJOBS 20
 
