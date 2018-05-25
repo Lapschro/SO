@@ -8,7 +8,8 @@
 
 #include "Structures.h"
 
-int main(int argc, char ** argv){
+int main(int argc, char **argv)
+{
     if (argc < 2)
     {
         std::cout << "remove_postergado <id>";
@@ -24,7 +25,7 @@ int main(int argc, char ** argv){
         std::cout << "Erro na entrada: \nFormato de chamada:\nremove_postergado <jobId>\n";
         return 1;
     }
-    long jobId =  atoi(argv[1]);
+    long jobId = atoi(argv[1]);
     msg.content.pid = jobId; /*adicionar jobId depois*/
 
     int msgID = msgget(KEY, QUEUEPERMISSION);
@@ -49,7 +50,7 @@ int main(int argc, char ** argv){
         }
         else
             std::cout << "Job Number: " << am.jobNumber << std::endl
-                      << " was removed: "<< std::endl;
+                      << " was removed: " << std::endl;
     }
     return 0;
 }

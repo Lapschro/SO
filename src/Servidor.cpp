@@ -52,7 +52,7 @@ void Alarm(int a){
 void WrapUp(int a){
 	if(msgID >= 0){
 		if(msgctl(msgID, IPC_RMID, NULL) < 0){
-			std::cout<<"Error while deleting queue: "<<strerror(errno)<<std::endl;
+			std::cout<<"Error while deleting queue: "<<std::endl;
 		}
 	}
 
@@ -228,14 +228,12 @@ void removeJob(long jobID)
 {
 	if(jobID>0){
 
-		if(jobs[jobID-1].running == 0 ){
+		if(jobs[jobID-1].running == 0 and jobs[jobID-1].jobNumber != 0){
 
 			jobs[jobID - 1].jobNumber = 0;
-
 			AnswerMessage am;
 			am.msgtype = RMV;
 			am.jobNumber = jobID;
-
 			msgsnd(msgID, &am, sizeof(am.jobNumber), 0);
 			return;
 		}
@@ -245,6 +243,16 @@ void removeJob(long jobID)
 	am.jobNumber = -1;
 	msgsnd(msgID, &am, sizeof(am.jobNumber), 0);
 
+}
+
+void shutdown()
+{
+	/* Essa função precisa avisar para o usuário que mais nenhum processo será executado
+	*  se houver processos não executados o processo avisa ao usuário que os mesmos não serão executados
+	*  e imprime dados de cada processo que foi efetivamente executado no período de atividade do servidor, contendo
+	*  pid do processo, nome do arquivo executável, tempo de submissão, tempo de início de execução, tempo de término de execução.
+	*/
+	raise(SIGTERM);
 }
 
 int main (int argc, char **argv){
@@ -277,6 +285,9 @@ int main (int argc, char **argv){
 			else if(msg.msgAct == RMV){
 				removeJob(msg.content.pid);
 
+			}
+			else if(msg.msgAct == SHUTDOWN){
+				shutdown();
 			}
 		}
 		Update();
