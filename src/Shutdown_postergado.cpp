@@ -26,18 +26,5 @@ int main(int argc, char **argv)
     }
 
     MSGSND(msgID, &msg, sizeof(Content), 0)
-
-    AnswerMessage am;
-
-    MSGRCV(msgID, &am, sizeof(long), SHUTDOWN, 0)
-    else
-    {
-        if (am.jobNumber == -1)
-        {
-            std::cout << "Could not shutdown.\n";
-        }
-        else
-            std::cout << "Success." << std::endl;
-    }
     return 0;
 }

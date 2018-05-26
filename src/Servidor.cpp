@@ -47,6 +47,7 @@ void Alarm(int a){
 }
 
 void WrapUp(int a){
+	std::cout<<"Saindo";
 	if(msgID >= 0){
 		if(msgctl(msgID, IPC_RMID, NULL) < 0){
 			std::cout<<"Error while deleting queue: "<<std::endl;
