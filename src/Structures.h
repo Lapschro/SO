@@ -39,7 +39,7 @@ typedef struct AnswerMessage{
 
 typedef struct ListMessage
 {
-	int noJob;
 	long msgtype;
+	int noJob;
 	Job job;
 } ListMessage;

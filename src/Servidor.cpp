@@ -292,8 +292,8 @@ void listar_postergados(){
 
 	if(i==0){
 		lm.noJob = 1;
-		lm.msgtype = SND;
-		msgsnd(msgID, &lm, sizeof(int),0);
+		lm.msgtype = LIST;
+		msgsnd(msgID, &lm, sizeof(lm),0);
 		return;
 	}
 }

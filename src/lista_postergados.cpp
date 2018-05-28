@@ -25,12 +25,10 @@ int main(int argc, char **argv)
     }
 
     MSGSND(msgID, &msg, sizeof(Content), 0)
-
     ListMessage lm;
-    MSGRCV(msgID, &lm, sizeof(int), LIST, 0)
+    MSGRCV(msgID, &lm, sizeof(lm), LIST, 0)
     else
     {
-        std::cout<<"Aqui";
         if (lm.noJob == 1)
         {
             std::cout << "No jobs to List";
