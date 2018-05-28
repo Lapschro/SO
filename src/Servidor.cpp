@@ -276,6 +276,7 @@ void shutdown()
 	*  e imprime dados de cada processo que foi efetivamente executado no período de atividade do servidor, contendo
 	*  pid do processo, nome do arquivo executável, tempo de submissão, tempo de início de execução, tempo de término de execução.
 	*/
+	std::cout<<"\nFrom now on no job will execute\n\nEXECUTED JOBS\n";
 	raise(SIGTERM);
 }
 
@@ -309,7 +310,6 @@ void listar_postergados(){
 int main (int argc, char **argv){
 	signal (SIGALRM, Alarm); /*Assincrono, usado quando tem uma chamada a funcao alarm*/
 	signal (SIGTERM, WrapUp); /*TERMINATION*/
-	signal (SIGINT, WrapUp); /*INTERRUPCAO*/
 
 	Message msg;
 	runningTime = 5;

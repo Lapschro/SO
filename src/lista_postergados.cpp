@@ -47,15 +47,15 @@ int main(int argc, char **argv)
         else{
             std::cout << "\n\n\n";
             std::cout << "|    job    |      arq_exec      |   hhmm   |    copias    |    pri    |" << std::endl;
-            char buff[20];
-
+            char buff[10];
+            std::string hhmm;
             for (int i = 0; i < lm.nJobs; i++)
             {
                 
                 std::cout << "|" << leftAlign(std::to_string(lm.job[i].jobNumber), 11);
                 std::cout << "|" << leftAlign(lm.job[i].processName, 20);
-                // strftime(buff, 20, "%T", localtime(&it.subm_time));
-                std::cout << "|" << leftAlign("", 10);
+                strftime(buff, 10, "%H:%M:%S", &lm.job[i].startTime);
+                std::cout << "|" << leftAlign(buff, 10);
                 // strftime(buff, 20, "%T", localtime(&it.begin));
                 std::cout << "|" << leftAlign(std::to_string(lm.job[i].copies), 14);
                 // strftime(buff, 20, "%T", localtime(&it.end));
