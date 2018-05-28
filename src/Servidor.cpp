@@ -9,8 +9,11 @@
 #include <string.h>
 #include <signal.h>
 #include <ctime>
+#include <iomanip>
+#include <vector>
 #include "Structures.h"
 #include <stdlib.h>
+#include <sstream>
 #define NPROCESSES 20
 #define NJOBS 20
 
@@ -30,25 +33,50 @@ typedef struct job {
 Job jobs[NJOBS];
 
 typedef struct process{
+	std::string exec_name;
 	long pid;
 	unsigned int priority;
 	int jobID;
 	bool priorityUp;
 	bool ran;
+	time_t begin, end;
+
 } Process;
 
 Process processes[NPROCESSES];
-
+std::vector<Process> ranProcesses;
 int msgID;
-
+std::string leftAlign(const std::string s, const int w)
+{
+	std::stringstream ss, spaces;
+	int padding = w - s.size(); // count excess room to pad
+	for (int i = 0; i < padding; ++i)
+		spaces << " ";
+	ss << s << spaces.str(); // format with padding
+	return ss.str();
+}
 void Alarm(int a){
 	runningTime = 5;
 	//std::cout<<"Alarm.\n";
 }
 
 void WrapUp(int a){
-	std::cout<<"Saindo";
-	if(msgID >= 0){
+	/*pid 11 ; arq_exec 32 ; submission 39 ; begin 29 ; end 27*/
+	std::cout << "|    pid    |      arq_exec      |   submission_time   |    begin    |    end    |"<<std::endl;
+	char buff[20];
+
+	for(auto it:ranProcesses){
+		std::cout<<"|"<<leftAlign(std::to_string(it.pid), 11);
+		std::cout<<"|"<<leftAlign(it.exec_name, 20);
+		std::cout<<"|"<<leftAlign("", 21);
+		strftime(buff, 20, "%T", localtime(&it.begin));
+		std::cout<<"|"<<leftAlign(buff, 13);
+		strftime(buff, 20, "%T", localtime(&it.end));
+		std::cout<<"|"<<leftAlign(buff, 11)<<"|";
+		std::cout<<std::endl;
+	}
+	if (msgID >= 0)
+	{
 		if(msgctl(msgID, IPC_RMID, NULL) < 0){
 			std::cout<<"Error while deleting queue: "<<std::endl;
 		}
@@ -77,10 +105,12 @@ void CreateProcess(int jobID){
 		}
 		
 		Process p;
+		p.exec_name = jobs[jobID].processName;
 		p.priority = jobs[jobID].priority;
 		p.jobID = jobID;
 		p.priorityUp = false;
 		p.ran = false;
+		time(&p.begin);
 		p.pid = fork();
 		
 		if(p.pid == 0){
@@ -106,9 +136,9 @@ void Update(){
 
 		if(/*WIFEXITED(status)*/waitpid(currentProcess, &status, WNOHANG)>0){
 			jobs[processes[currentProcess].jobID].copies--;
-
+			time(&processes[currentProcess].end);
 			processes[currentProcess].pid = 0;
-
+			ranProcesses.push_back(processes[currentProcess]);
 			for(int i = 0;  i < NJOBS; i++){
 				if(jobs[i].copies == 0){
 					jobs[i].jobNumber = 0;
@@ -275,7 +305,6 @@ int main (int argc, char **argv){
 		//std::cout<<runningTime<<std::endl;
 		if(msgrcv(msgID, &msg, sizeof(Content), -1, 0) >= 0){
 			if(msg.msgAct == SND){
-				std::cout<<"certo";
 				runningTime = alarm(0);
 				//std::cout<<"Message received!\n";
 				MessageReceived(msg);
