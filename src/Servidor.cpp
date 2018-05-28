@@ -25,6 +25,7 @@ typedef struct job {
 	long jobNumber;
 	char processName[80];
 	unsigned int copies;
+	time_t subm_time;
 	unsigned int priority;
 	bool running;
 	struct tm startTime;
@@ -35,11 +36,12 @@ Job jobs[NJOBS];
 typedef struct process{
 	std::string exec_name;
 	long pid;
+	long oldpid;
 	unsigned int priority;
 	int jobID;
 	bool priorityUp;
 	bool ran;
-	time_t begin, end;
+	time_t begin, end, subm_time;
 
 } Process;
 
@@ -62,19 +64,23 @@ void Alarm(int a){
 
 void WrapUp(int a){
 	/*pid 11 ; arq_exec 32 ; submission 39 ; begin 29 ; end 27*/
+
+	std::cout<<"\n\n\n";
 	std::cout << "|    pid    |      arq_exec      |   submission_time   |    begin    |    end    |"<<std::endl;
 	char buff[20];
 
 	for(auto it:ranProcesses){
-		std::cout<<"|"<<leftAlign(std::to_string(it.pid), 11);
+		std::cout<<"|"<<leftAlign(std::to_string(it.oldpid), 11);
 		std::cout<<"|"<<leftAlign(it.exec_name, 20);
-		std::cout<<"|"<<leftAlign("", 21);
+		strftime(buff, 20, "%T", localtime(&it.subm_time));
+		std::cout<<"|"<<leftAlign(buff, 21);
 		strftime(buff, 20, "%T", localtime(&it.begin));
 		std::cout<<"|"<<leftAlign(buff, 13);
 		strftime(buff, 20, "%T", localtime(&it.end));
 		std::cout<<"|"<<leftAlign(buff, 11)<<"|";
 		std::cout<<std::endl;
 	}
+	std::cout<<std::endl;
 	if (msgID >= 0)
 	{
 		if(msgctl(msgID, IPC_RMID, NULL) < 0){
@@ -109,6 +115,7 @@ void CreateProcess(int jobID){
 		p.priority = jobs[jobID].priority;
 		p.jobID = jobID;
 		p.priorityUp = false;
+		p.subm_time =jobs[jobID].subm_time;
 		p.ran = false;
 		time(&p.begin);
 		p.pid = fork();
@@ -137,6 +144,7 @@ void Update(){
 		if(/*WIFEXITED(status)*/waitpid(currentProcess, &status, WNOHANG)>0){
 			jobs[processes[currentProcess].jobID].copies--;
 			time(&processes[currentProcess].end);
+			processes[currentProcess].oldpid = processes[currentProcess].pid;
 			processes[currentProcess].pid = 0;
 			ranProcesses.push_back(processes[currentProcess]);
 			for(int i = 0;  i < NJOBS; i++){
@@ -237,7 +245,7 @@ void MessageReceived(Message msg){
 
 	time_t now;
 	time(&now);
-
+	time(&job.subm_time);
 	job.startTime = *localtime(&now);
 	job.startTime.tm_hour += msg.content.hour;
 	job.startTime.tm_min += msg.content.minute;
