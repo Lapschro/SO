@@ -40,10 +40,11 @@ int msgID;
 std::string leftAlign(const std::string s, const int w)
 {
 	std::stringstream ss, spaces;
-	int padding = w - s.size(); // count excess room to pad
+	int padding = w - s.size();
 	for (int i = 0; i < padding; ++i)
 		spaces << " ";
-	ss << s << spaces.str(); // format with padding
+	
+	ss << s << spaces.str(); 
 	return ss.str();
 }
 void Alarm(int a){
@@ -52,6 +53,7 @@ void Alarm(int a){
 }
 
 void WrapUp(int a){
+	/* Os indices abaixo são os tamanhos entre as |, pra organizar a tabela*/
 	/*pid 11 ; arq_exec 32 ; submission 39 ; begin 29 ; end 27*/
 
 	std::cout<<"\n\n\n";
@@ -310,6 +312,7 @@ void listar_postergados(){
 int main (int argc, char **argv){
 	signal (SIGALRM, Alarm); /*Assincrono, usado quando tem uma chamada a funcao alarm*/
 	signal (SIGTERM, WrapUp); /*TERMINATION*/
+	signal (SIGINT, WrapUp); /*INTERRUPCAO*/
 
 	Message msg;
 	runningTime = 5;
