@@ -20,17 +20,6 @@
 long jobNumber = 1;
 long currentProcess = -1;
 unsigned int runningTime = 5;
-
-typedef struct job {
-	long jobNumber;
-	char processName[80];
-	unsigned int copies;
-	time_t subm_time;
-	unsigned int priority;
-	bool running;
-	struct tm startTime;
-} Job;
-
 Job jobs[NJOBS];
 
 typedef struct process{
@@ -87,7 +76,6 @@ void WrapUp(int a){
 			std::cout<<"Error while deleting queue: "<<std::endl;
 		}
 	}
-
 	exit(0);
 }
 
@@ -262,19 +250,19 @@ void MessageReceived(Message msg){
 
 void removeJob(long jobID)
 {
+	AnswerMessage am;
+
 	if(jobID>0){
 
 		if(jobs[jobID-1].running == 0 and jobs[jobID-1].jobNumber != 0){
 
 			jobs[jobID - 1].jobNumber = 0;
-			AnswerMessage am;
 			am.msgtype = RMV;
 			am.jobNumber = jobID;
 			msgsnd(msgID, &am, sizeof(am.jobNumber), 0);
 			return;
 		}
 	}
-	AnswerMessage am;
 	am.msgtype = RMV;
 	am.jobNumber = -1;
 	msgsnd(msgID, &am, sizeof(am.jobNumber), 0);
@@ -289,6 +277,25 @@ void shutdown()
 	*  pid do processo, nome do arquivo executável, tempo de submissão, tempo de início de execução, tempo de término de execução.
 	*/
 	raise(SIGTERM);
+}
+
+void listar_postergados(){
+	/*Essa funcao vai enviar todos os dados dos jobs já adicionado na lista de JOBS de acordo com o exemplo*/
+	int i;
+	ListMessage lm;
+
+	for (i = 0; i < NJOBS; i++)
+	{
+		if (jobs[i].jobNumber == 0)
+			break;
+	}
+
+	if(i==0){
+		lm.noJob = 1;
+		lm.msgtype = SND;
+		msgsnd(msgID, &lm, sizeof(int),0);
+		return;
+	}
 }
 
 int main (int argc, char **argv){
@@ -323,6 +330,8 @@ int main (int argc, char **argv){
 			}
 			else if(msg.msgAct == SHUTDOWN){
 				shutdown();
+			}else if(msg.msgAct == LIST){
+				listar_postergados();
 			}
 		}
 		Update();

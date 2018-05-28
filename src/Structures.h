@@ -1,5 +1,6 @@
 #define KEY 0x40304
 #define QUEUEPERMISSION 0660
+
 #define MSGSND(msgID,ptr,size,flag) if(msgsnd(msgID,ptr,size,flag) < 0) std::cout<<"Error on send: "<<strerror(errno)<<std::endl;
 
 #define MSGRCV(msgID,ptr,size,type,flag) if(msgrcv(msgID,ptr,size,type,flag) < 0) std::cout<<"Error on receive: "<<strerror(errno)<<std::endl;
@@ -7,7 +8,16 @@
 enum MSGType{
 	SND = 1, RCV, RMV, LIST, SHUTDOWN
 };
-
+typedef struct job
+{
+	long jobNumber;
+	char processName[80];
+	unsigned int copies;
+	time_t subm_time;
+	unsigned int priority;
+	bool running;
+	struct tm startTime;
+} Job;
 typedef struct Content{
 	long pid;
 	unsigned int hour, minute;
@@ -27,4 +37,9 @@ typedef struct AnswerMessage{
 	long jobNumber;
 } AnswerMessage;
 
-
+typedef struct ListMessage
+{
+	int noJob;
+	long msgtype;
+	Job job;
+} ListMessage;
