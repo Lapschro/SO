@@ -291,13 +291,13 @@ void listar_postergados(){
 	}
 
 	if(i==0){
-		lm.noJob = 1;
+		lm.nJobs = 0;
 		lm.msgtype = LIST;
 		msgsnd(msgID, &lm, sizeof(lm),0);
 		return;
 	}else{
 		lm.msgtype = LIST;
-		lm.noJob = i;
+		lm.nJobs = i;
 		for(int j = 0;j <i ;j++){
 			lm.job[j] = jobs[j];
 		}

@@ -40,6 +40,6 @@ typedef struct AnswerMessage{
 typedef struct ListMessage
 {
 	long msgtype;
-	int noJob;
+	int nJobs;
 	Job job[20];
 } ListMessage;

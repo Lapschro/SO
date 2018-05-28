@@ -40,7 +40,7 @@ int main(int argc, char **argv)
     MSGRCV(msgID, &lm, sizeof(lm), LIST, 0)
     else
     {
-        if (lm.noJob == 1)
+        if (lm.nJobs == 0)
         {
             std::cout << "No jobs to List\n\n";
         }
@@ -49,7 +49,7 @@ int main(int argc, char **argv)
             std::cout << "|    job    |      arq_exec      |   hhmm   |    copias    |    pri    |" << std::endl;
             char buff[20];
 
-            for (int i =0; i<lm.noJob; i++)
+            for (int i = 0; i < lm.nJobs; i++)
             {
                 
                 std::cout << "|" << leftAlign(std::to_string(lm.job[i].jobNumber), 11);
