@@ -41,5 +41,5 @@ typedef struct ListMessage
 {
 	long msgtype;
 	int noJob;
-	Job job;
+	Job job[20];
 } ListMessage;

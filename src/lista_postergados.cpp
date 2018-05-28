@@ -7,6 +7,17 @@
 #include <signal.h>
 #include <stdlib.h>
 #include "Structures.h"
+#include <sstream>
+
+std::string leftAlign(const std::string s, const int w)
+{
+    std::stringstream ss, spaces;
+    int padding = w - s.size(); // count excess room to pad
+    for (int i = 0; i < padding; ++i)
+        spaces << " ";
+    ss << s << spaces.str(); // format with padding
+    return ss.str();
+}
 
 int main(int argc, char **argv)
 {
@@ -31,10 +42,28 @@ int main(int argc, char **argv)
     {
         if (lm.noJob == 1)
         {
-            std::cout << "No jobs to List";
+            std::cout << "No jobs to List\n\n";
         }
         else{
-        /*Escreve os jobs escalonados*/
+            std::cout << "\n\n\n";
+            std::cout << "|    job    |      arq_exec      |   hhmm   |    copias    |    pri    |" << std::endl;
+            char buff[20];
+
+            for (int i =0; i<lm.noJob; i++)
+            {
+                
+                std::cout << "|" << leftAlign(std::to_string(lm.job[i].jobNumber), 11);
+                std::cout << "|" << leftAlign(lm.job[i].processName, 20);
+                // strftime(buff, 20, "%T", localtime(&it.subm_time));
+                std::cout << "|" << leftAlign("", 10);
+                // strftime(buff, 20, "%T", localtime(&it.begin));
+                std::cout << "|" << leftAlign(std::to_string(lm.job[i].copies), 14);
+                // strftime(buff, 20, "%T", localtime(&it.end));
+                std::cout << "|" << leftAlign(std::to_string(lm.job[i].priority), 11) << "|";
+                std::cout << std::endl;
+            }
+            std::cout << std::endl;
+            /*Escreve os jobs escalonados*/
         }
     }
     return 0;

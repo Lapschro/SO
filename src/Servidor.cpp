@@ -295,6 +295,14 @@ void listar_postergados(){
 		lm.msgtype = LIST;
 		msgsnd(msgID, &lm, sizeof(lm),0);
 		return;
+	}else{
+		lm.msgtype = LIST;
+		lm.noJob = i;
+		for(int j = 0;j <i ;j++){
+			lm.job[j] = jobs[j];
+		}
+		msgsnd(msgID, &lm, sizeof(lm), 0);
+		return;
 	}
 }
 
