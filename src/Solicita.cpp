@@ -6,11 +6,7 @@
 #include <string.h>
 #include <signal.h>
 #include <stdlib.h>
-
 #include "Structures.h"
-
-
-
 
 int msgID;
 
@@ -20,7 +16,7 @@ int main(int argc, char** argv){
 	msg.msgtype = SND;
 	msg.msgAct = SND;
 	if(argc < 4){
-		std::cout<<"Erro na entrada: \nFormato de chamada:\nsolicita_execucao <hora:min> <copias> [<prioridade>] <nome do executavel>\n";
+		std::cout<<"Erro na entrada: \nFormato de chamada:\./Solicita <hora:min> <copias> [<prioridade>] <nome do executavel>\n";
 		return 1;
 	}
 
@@ -31,12 +27,11 @@ int main(int argc, char** argv){
 		std::cout << "Formato de hora errada\n";
 		return -1;
 	}else{
-		/*cast hour and minute*/
 		const char delimiters[] = ":";
 		char *hours;
 		char *minutes;
 		minutes = strdupa(hourminute);
-		hours = strsep(&minutes, delimiters); /* token => "words" */
+		hours = strsep(&minutes, delimiters);
 		msg.content.hour = atoi(hours);
 		msg.content.minute = atoi(minutes);
 	}
