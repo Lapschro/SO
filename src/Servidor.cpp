@@ -157,11 +157,9 @@ void Update(){
 				processes[currentProcess].ran = true;
 			}
 			
-			if(runningTime == 5){
-				Process p = processes[currentProcess];
-				memcpy(processes, &processes[1], (NPROCESSES-1)*sizeof(Process));
-				processes[NPROCESSES -1] = p;
-			}
+			Process p = processes[currentProcess];
+			memcpy(processes, &processes[1], (NPROCESSES-1)*sizeof(Process));
+			processes[NPROCESSES -1] = p;
 		}
 	}
 
