@@ -56,14 +56,11 @@ int main(int argc, char **argv)
                 std::cout << "|" << leftAlign(lm.job[i].processName, 20);
                 strftime(buff, 10, "%H:%M:%S", &lm.job[i].startTime);
                 std::cout << "|" << leftAlign(buff, 10);
-                // strftime(buff, 20, "%T", localtime(&it.begin));
                 std::cout << "|" << leftAlign(std::to_string(lm.job[i].copies), 14);
-                // strftime(buff, 20, "%T", localtime(&it.end));
                 std::cout << "|" << leftAlign(std::to_string(lm.job[i].priority), 11) << "|";
                 std::cout << std::endl;
             }
             std::cout << std::endl;
-            /*Escreve os jobs escalonados*/
         }
     }
     return 0;

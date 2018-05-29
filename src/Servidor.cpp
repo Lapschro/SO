@@ -50,7 +50,6 @@ std::string leftAlign(const std::string s, const int w)
 }
 void Alarm(int a){
 	runningTime = 5;
-	//std::cout<<"Alarm.\n";
 }
 
 void WrapUp(int a){
@@ -118,7 +117,6 @@ void CreateProcess(int jobID){
 			return;
 		}
 		
-		//std::cout<<"Stopping pid: "<<p.pid<<std::endl;
 		kill(p.pid, SIGSTOP);
 
 		processes[j] = p;
@@ -170,7 +168,6 @@ void Update(){
 	for(int i = 0; i < NJOBS; i++){
 		if(jobs[i].jobNumber != 0 && !jobs[i].running ){
 			double diff = difftime(mktime(&jobs[i].startTime), time(NULL));
-			//std::cout<<diff<<std::endl;
 			if(diff <= 0){
 				CreateProcess(i);
 			}
@@ -212,9 +209,6 @@ void Scheduler(){
 }
 
 void MessageReceived(Message msg){
-	//std::cout<<"Contents: \n";
-	//std::cout<<msg.content.pid<<" "<<msg.content.processName<<std::endl;
-	
 	int i;	
 	for(i = 0; i < NJOBS; i++){
 		if(jobs[i].jobNumber == 0)
@@ -277,17 +271,11 @@ void removeJob(long jobID)
 
 void shutdown()
 {
-	/* Essa função precisa avisar para o usuário que mais nenhum processo será executado
-	*  se houver processos não executados o processo avisa ao usuário que os mesmos não serão executados
-	*  e imprime dados de cada processo que foi efetivamente executado no período de atividade do servidor, contendo
-	*  pid do processo, nome do arquivo executável, tempo de submissão, tempo de início de execução, tempo de término de execução.
-	*/
 	std::cout<<"\nFrom now on no job will execute\n\nEXECUTED JOBS\n";
 	raise(SIGTERM);
 }
 
 void listar_postergados(){
-	/*Essa funcao vai enviar todos os dados dos jobs já adicionado na lista de JOBS de acordo com o exemplo*/
 	int i;
 	ListMessage lm;
 
@@ -332,11 +320,9 @@ int main (int argc, char **argv){
 	}
 	for(;;){
 		alarm(runningTime);
-		//std::cout<<runningTime<<std::endl;
 		if(msgrcv(msgID, &msg, sizeof(Content), -1, 0) >= 0){
 			if(msg.msgAct == SND){
 				runningTime = alarm(0);
-				//std::cout<<"Message received!\n";
 				MessageReceived(msg);
 			}
 			else if(msg.msgAct == RMV){
