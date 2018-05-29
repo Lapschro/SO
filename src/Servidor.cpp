@@ -19,6 +19,7 @@
 
 long jobNumber = 1;
 long currentProcess = -1;
+long currentpid = 0;
 unsigned int runningTime = 5;
 Job jobs[NJOBS];
 
@@ -131,7 +132,7 @@ void Update(){
 
 		int status;
 
-		if(/*WIFEXITED(status)*/waitpid(currentProcess, &status, WNOHANG)>0){
+		if(waitpid(currentProcess, &status, WNOHANG)>0){
 			jobs[processes[currentProcess].jobID].copies--;
 			time(&processes[currentProcess].end);
 			processes[currentProcess].oldpid = processes[currentProcess].pid;
@@ -143,7 +144,7 @@ void Update(){
 					jobs[i].running = false;
 				}
 			}
-		}else{
+		}else if (runningTime == 5){
 			if(processes[currentProcess].ran){
 				processes[currentProcess].ran = false;
 				if(processes[currentProcess].priority == 3){
@@ -204,6 +205,9 @@ void Scheduler(){
 	if(currentProcess == -1)
 		runningTime = 5;
 	currentProcess = 0;
+	if(processes[0].pid != currentpid)
+		runningTime = 5;
+	currentpid = processes[0].pid;
 	kill(processes[0].pid, SIGCONT);
 }
 

@@ -4,10 +4,7 @@
 #include <ctime>
 
 int main (){
-	for(int i = 0; i < 15; i++){
-		printf("2- Slept %d\n", i);
-		sleep(1);
-	}
-	printf("Acabou!\n");
+	for(int j = 0; j < 3; j++)
+		for(unsigned int i = 0; i < 0xffffffff;i++);
 	return 0;
 }
